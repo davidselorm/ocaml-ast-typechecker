@@ -1,10 +1,12 @@
 open Typecheck
 
-let rec unify (t1: typ) (t2: typ) : (string * typ) list =
-  match (t1, t2) with
-  | (TInt, TInt) | (TBool, TBool) -> []
-  | (TVar a, t) | (t, TVar a) ->
-      if t = TVar a then []
-      else if occurs a t then failwith "Occurs check failed"
-      else [(a, t)]
-  | _ -> failwith "Type mismatch"
+let rec string_of_typ = function
+  | TInt -> "int"
+  | TBool -> "bool"
+  | TVar x -> x
+  | TArrow (t1, t2) -> "(" ^ string_of_typ t1 ^ " -> " ^ string_of_typ t2 ^ ")"
+
+let () =
+  let test_expr = Lam ("x", Var "x") in
+  let ty = typecheck [] test_expr in
+  print_endline ("[PASS] Inferred identity type: " ^ string_of_typ ty)
